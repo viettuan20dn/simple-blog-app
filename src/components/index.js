@@ -7,6 +7,10 @@ import Select from "./Select";
 import Input from "./Input";
 import Logo from "./Logo";
 import LogoutBtn from "./Header/LogoutBtn";
+import { FeaturedBlog, TagCard, AuthorCard } from "./Homepage";
+import PostCard from "./PostCard";
+import SearchBox from "./SearchBox";
+import SortBar from "./SortBar";
 
 export {
   Login,
@@ -18,4 +22,10 @@ export {
   Input,
   Logo,
   LogoutBtn,
+  FeaturedBlog,
+  PostCard,
+  TagCard,
+  AuthorCard,
+  SearchBox,
+  SortBar
 };

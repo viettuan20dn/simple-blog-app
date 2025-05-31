@@ -19,6 +19,9 @@ import EditPost from "./pages/EditPost";
 import Post from "./pages/Post";
 
 import "./index.css";
+import About from "./pages/About";
+import MyBlogs from "./pages/MyBlogs";
+import MyProfile from "./pages/MyProfile";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +53,26 @@ const router = createBrowserRouter([
         element: (
           <Protected authentication>
             <AllPosts />
+          </Protected>
+        ),
+      },
+      {
+        path: "about",
+        element: <About />,
+      },
+      {
+        path: "my-profile",
+        element: (
+          <Protected authentication>
+            <MyProfile />,
+          </Protected>
+        ),
+      },
+      {
+        path: "my-blogs",
+        element: (
+          <Protected authentication>
+            <MyBlogs />,
           </Protected>
         ),
       },

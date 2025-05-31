@@ -7,12 +7,18 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { login as authLogin } from "../store/authSlice";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState();
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const login = async (data) => {
     setError("");
@@ -57,17 +63,38 @@ const Login = () => {
               label="Email : "
               placeholder="Email Address"
               type="email"
+              className="focus:ring-1 focus:ring-blue-400 required:ring-red-600 invalid:ring-red-600"
               {...register("email", {
                 required: true,
+                pattern: {
+                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                  message: "Invalid email address",
+                },
               })}
             />
+            {errors.email && (
+              <span className="text-sm text-red-600 pl-1">
+                <FontAwesomeIcon icon={faTriangleExclamation} />{" "}
+                {errors.email.message || "This field is required!"}
+              </span>
+            )}
             <Input
               label="Password : "
               type="password"
               placeholder="Password"
-              {...register("password", { required: true })}
+              className="focus:ring-1 focus:ring-blue-400 invalid:ring-red-600"
+              {...register("password", { required: true, minLength: 8 })}
             />
-            <Button type="submit" className="w-full">
+            {errors.password && (
+              <span className="text-sm text-red-600 pl-1">
+                <FontAwesomeIcon icon={faTriangleExclamation} /> This field is
+                required and has to at least 8 chars!
+              </span>
+            )}
+            <Button
+              type="submit"
+              className="w-full hover:bg-blue-700 shadow-lg hover:shadow-slate-400"
+            >
               Sign in
             </Button>
           </div>

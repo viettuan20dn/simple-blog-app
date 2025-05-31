@@ -1,17 +1,40 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Logo, Container, LogoutBtn } from "../index";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
-  const navigate = useNavigate();
 
   const navItems = [
     {
       name: "Home",
       slug: "/",
       active: true,
+    },
+    {
+      name: "All blogs",
+      slug: "/all-posts",
+      active: true,
+    },
+    {
+      name: "About",
+      slug: "/about",
+      active: true,
+    },
+    {
+      name: "|",
+      slug: undefined,
+      active: true,
+    },
+    {
+      name: "My blogs",
+      slug: "/my-blogs",
+      active: authStatus,
+    },
+    {
+      name: "My profile",
+      slug: "/my-profile",
+      active: authStatus,
     },
     {
       name: "Login",
@@ -23,20 +46,10 @@ function Header() {
       slug: "/signup",
       active: !authStatus,
     },
-    {
-      name: "All Posts",
-      slug: "/all-posts",
-      active: authStatus,
-    },
-    {
-      name: "Add Post",
-      slug: "/add-post",
-      active: authStatus,
-    },
   ];
 
   return (
-    <header className="py-3 bg-gray-500 shadow">
+    <header id="H0" className="py-3 bg-gray-500 shadow">
       <Container>
         <nav className="flex">
           <div className="mr-4">
@@ -44,16 +57,24 @@ function Header() {
               <Logo width="48px" />
             </Link>
           </div>
-          <ul className="flex ml-auto">
+          <ul className="flex ml-auto items-center gap-1">
             {navItems.map((item) =>
               item.active ? (
                 <li key={item.name}>
-                  <button
-                    onClick={() => navigate(item.slug)}
-                    className="inline-block px-6 py-2 duration-200 hover:bg-blue-100 rounded-full"
-                  >
-                    {item.name}
-                  </button>
+                  {item.slug ? (
+                    <NavLink
+                      to={item.slug}
+                      className={({ isActive }) =>
+                        `inline-block px-4 py-1 duration-200 rounded-full ${
+                          isActive ? "text-white font-semibold" : "hover:bg-blue-100"
+                        }`
+                      }
+                    >
+                      {item.name}
+                    </NavLink>
+                  ) : (
+                    <span>{item.name}</span>
+                  )}
                 </li>
               ) : null
             )}

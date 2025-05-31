@@ -1,4 +1,5 @@
 import React, { forwardRef, useId } from "react";
+import parse from "html-react-parser";
 
 const Input = forwardRef(function Input(
   { type = "text", label, className = "", ...props },
@@ -10,7 +11,7 @@ const Input = forwardRef(function Input(
     <div className="w-full">
       {label && (
         <label htmlFor={id} className="inline-block mb-1 pl-1">
-          {label}
+          {parse(label)}
         </label>
       )}
 
