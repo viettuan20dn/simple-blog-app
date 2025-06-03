@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import appwriteService from "../appwrite/config";
 import PostCard from "../components/PostCard";
 import Container from "../components/container/Container";
-import { SearchBox, SortBar } from "../components";
+import { FilterBar, SearchBox, SortBar } from "../components";
+import PaginationDemo from "../components/Pagination/Pagination";
 
 function AllPosts() {
   const [posts, setPosts] = useState([]);
@@ -21,20 +22,26 @@ function AllPosts() {
     <div className="w-full py-8 bg-white">
       <Container>
         <div className="flex justify-center">
-          <SearchBox />
+          <SearchBox inAllBlogs/>
         </div>
 
         <div className="mt-4">
           <SortBar />
         </div>
 
-        <div className="mt-5 flex flex-wrap">
+        <div className="mt-4">
+          <FilterBar />
+        </div>
+
+        <div className="mt-6 flex flex-wrap">
           {posts.map((post) => (
             <div className="p-2 w-1/4" key={post.$id}>
               <PostCard {...post} />
             </div>
           ))}
         </div>
+
+        <PaginationDemo />
       </Container>
     </div>
   );

@@ -1,4 +1,10 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import appwriteService from "../appwrite/config";
+import PostCard from "../components/PostCard";
+import { FilterBar, SearchBox, SortBar } from "../components";
+import PaginationDemo from "../components/Pagination/Pagination";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 export default function MyProfile() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -56,6 +62,16 @@ export default function MyProfile() {
     { label: "Rating", value: "4.9", icon: "fas fa-heart" },
   ];
 
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    appwriteService.getPosts([]).then((posts) => {
+      if (posts) {
+        setPosts(posts.documents);
+      }
+    });
+  }, []);
+
   const handleInputChange = (field, value) => {
     setProfileData((prev) => ({ ...prev, [field]: value }));
   };
@@ -68,30 +84,13 @@ export default function MyProfile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      {/* FontAwesome CDN */}
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      />
-
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-800">My Profile</h1>
-            <button
-              onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-              className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${
-                isEditing
-                  ? "bg-green-600 hover:bg-green-700 text-white"
-                  : "bg-blue-600 hover:bg-blue-700 text-white"
-              }`}
-            >
-              <i
-                className={`${isEditing ? "fas fa-save" : "fas fa-edit"} mr-2`}
-              ></i>
-              {isEditing ? "Save Changes" : "Edit Profile"}
-            </button>
+            <h1 className="text-2xl font-bold text-gray-800">
+              My profile information
+            </h1>
           </div>
         </div>
       </div>
@@ -188,287 +187,193 @@ export default function MyProfile() {
                 </div>
               </div>
             </div>
-
-            {/* Skills Card */}
-            <div className="bg-white rounded-3xl shadow-xl p-8">
-              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                <i className="fas fa-code text-blue-600 mr-3"></i>
-                Skills
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {skills.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors cursor-pointer"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Main Content */}
           <div className="lg:col-span-8">
-            {/* Tab Navigation */}
-            <div className="bg-white rounded-2xl shadow-lg mb-8">
-              <div className="flex border-b">
-                {[
-                  { id: "profile", label: "Profile Info", icon: "fas fa-user" },
-                  {
-                    id: "activity",
-                    label: "Activity",
-                    icon: "fas fa-chart-line",
-                  },
-                  { id: "settings", label: "Settings", icon: "fas fa-cog" },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex-1 px-6 py-4 text-center font-semibold transition-all duration-300 ${
-                      activeTab === tab.id
-                        ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                        : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-                    }`}
-                  >
-                    <i className={`${tab.icon} mr-2`}></i>
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Tab Content */}
-            <div className="bg-white rounded-3xl shadow-xl p-8">
-              {activeTab === "profile" && (
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-8">
-                    Profile Information
-                  </h3>
+            <div className="bg-white rounded-3xl shadow-xl p-8 relative">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-8">
+                  Profile Information
+                </h3>
 
-                  <div className="grid md:grid-cols-2 gap-6 mb-8">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        <i className="fas fa-envelope mr-2 text-blue-600"></i>
-                        Email Address
-                      </label>
-                      {isEditing ? (
-                        <input
-                          type="email"
-                          value={profileData.email}
-                          onChange={(e) =>
-                            handleInputChange("email", e.target.value)
-                          }
-                          className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      ) : (
-                        <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
-                          {profileData.email}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        <i className="fas fa-phone mr-2 text-blue-600"></i>
-                        Phone Number
-                      </label>
-                      {isEditing ? (
-                        <input
-                          type="tel"
-                          value={profileData.phone}
-                          onChange={(e) =>
-                            handleInputChange("phone", e.target.value)
-                          }
-                          className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      ) : (
-                        <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
-                          {profileData.phone}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        <i className="fas fa-map-marker-alt mr-2 text-blue-600"></i>
-                        Location
-                      </label>
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={profileData.location}
-                          onChange={(e) =>
-                            handleInputChange("location", e.target.value)
-                          }
-                          className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      ) : (
-                        <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
-                          {profileData.location}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        <i className="fas fa-building mr-2 text-blue-600"></i>
-                        Company
-                      </label>
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={profileData.company}
-                          onChange={(e) =>
-                            handleInputChange("company", e.target.value)
-                          }
-                          className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      ) : (
-                        <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
-                          {profileData.company}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="mb-6">
+                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                  <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      <i className="fas fa-user mr-2 text-blue-600"></i>
-                      Bio
+                      <i className="fas fa-envelope mr-2 text-blue-600"></i>
+                      Email Address
                     </label>
                     {isEditing ? (
-                      <textarea
-                        value={profileData.bio}
+                      <input
+                        type="email"
+                        value={profileData.email}
                         onChange={(e) =>
-                          handleInputChange("bio", e.target.value)
+                          handleInputChange("email", e.target.value)
                         }
-                        rows="4"
                         className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     ) : (
-                      <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800 leading-relaxed">
-                        {profileData.bio}
+                      <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
+                        {profileData.email}
                       </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      <i className="fas fa-globe mr-2 text-blue-600"></i>
-                      Website
+                      <i className="fas fa-phone mr-2 text-blue-600"></i>
+                      Phone Number
                     </label>
                     {isEditing ? (
                       <input
-                        type="url"
-                        value={profileData.website}
+                        type="tel"
+                        value={profileData.phone}
                         onChange={(e) =>
-                          handleInputChange("website", e.target.value)
+                          handleInputChange("phone", e.target.value)
                         }
                         className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     ) : (
-                      <a
-                        href={profileData.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-3 bg-blue-50 rounded-xl text-blue-600 hover:text-blue-800 transition-colors block"
-                      >
-                        {profileData.website}
-                      </a>
+                      <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
+                        {profileData.phone}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <i className="fas fa-map-marker-alt mr-2 text-blue-600"></i>
+                      Location
+                    </label>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={profileData.location}
+                        onChange={(e) =>
+                          handleInputChange("location", e.target.value)
+                        }
+                        className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    ) : (
+                      <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
+                        {profileData.location}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <i className="fas fa-building mr-2 text-blue-600"></i>
+                      Company
+                    </label>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={profileData.company}
+                        onChange={(e) =>
+                          handleInputChange("company", e.target.value)
+                        }
+                        className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    ) : (
+                      <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800">
+                        {profileData.company}
+                      </p>
                     )}
                   </div>
                 </div>
-              )}
 
-              {activeTab === "activity" && (
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-8">
-                    Recent Activity
-                  </h3>
-
-                  <div className="space-y-6">
-                    {activities.map((activity, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start space-x-4 p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors"
-                      >
-                        <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                          <i className={`${activity.icon} text-blue-600`}></i>
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-gray-800 font-medium">
-                            {activity.text}
-                          </p>
-                          <p className="text-gray-500 text-sm mt-1">
-                            {activity.time}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <i className="fas fa-user mr-2 text-blue-600"></i>
+                    Bio
+                  </label>
+                  {isEditing ? (
+                    <textarea
+                      value={profileData.bio}
+                      onChange={(e) => handleInputChange("bio", e.target.value)}
+                      rows="4"
+                      className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  ) : (
+                    <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-800 leading-relaxed">
+                      {profileData.bio}
+                    </p>
+                  )}
                 </div>
-              )}
 
-              {activeTab === "settings" && (
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-8">
-                    Account Settings
-                  </h3>
-
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between p-6 bg-gray-50 rounded-2xl">
-                      <div>
-                        <h4 className="font-semibold text-gray-800">
-                          Email Notifications
-                        </h4>
-                        <p className="text-gray-600 text-sm">
-                          Receive updates about your account
-                        </p>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          className="sr-only peer"
-                          defaultChecked
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-
-                    <div className="flex items-center justify-between p-6 bg-gray-50 rounded-2xl">
-                      <div>
-                        <h4 className="font-semibold text-gray-800">
-                          Two-Factor Authentication
-                        </h4>
-                        <p className="text-gray-600 text-sm">
-                          Add an extra layer of security
-                        </p>
-                      </div>
-                      <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        Enable
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-6 bg-red-50 rounded-2xl border border-red-200">
-                      <div>
-                        <h4 className="font-semibold text-red-800">
-                          Delete Account
-                        </h4>
-                        <p className="text-red-600 text-sm">
-                          Permanently delete your account and data
-                        </p>
-                      </div>
-                      <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                        Delete
-                      </button>
-                    </div>
-                  </div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <i className="fas fa-globe mr-2 text-blue-600"></i>
+                    Website
+                  </label>
+                  {isEditing ? (
+                    <input
+                      type="url"
+                      value={profileData.website}
+                      onChange={(e) =>
+                        handleInputChange("website", e.target.value)
+                      }
+                      className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  ) : (
+                    <a
+                      href={profileData.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-3 bg-blue-50 rounded-xl text-blue-600 hover:text-blue-800 transition-colors block"
+                    >
+                      {profileData.website}
+                    </a>
+                  )}
                 </div>
-              )}
+              </div>
+
+              <button
+                onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+                className={`
+                  absolute top-4 right-4
+                  px-6 py-2 rounded-full font-semibold transition-all duration-300 ${
+                    isEditing
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
+                  }`}
+              >
+                <FontAwesomeIcon
+                  icon={isEditing ? faPenToSquare : faPenToSquare}
+                  className="mr-2"
+                />
+              </button>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-4 bg-white">
+        <h1 className="text-2xl font-bold tex t-gray-800">
+          My favourite blogs
+        </h1>
+        <div className="mt-10">
+          <SortBar />
+        </div>
+
+        <div className="mt-4">
+          <FilterBar />
+        </div>
+
+        <div className="mt-4 flex justify-center">
+          <SearchBox />
+        </div>
+
+        <div className="mt-6 flex flex-wrap">
+          {posts.map((post) => (
+            <div className="p-2 w-1/4" key={post.$id}>
+              <PostCard {...post} isViewingOwnPosts />
+            </div>
+          ))}
+        </div>
+        <PaginationDemo />
       </div>
     </div>
   );

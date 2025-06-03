@@ -11,6 +11,7 @@ import { FeaturedBlog, TagCard, AuthorCard } from "./Homepage";
 import PostCard from "./PostCard";
 import SearchBox from "./SearchBox";
 import SortBar from "./SortBar";
+import FilterBar from "./FilterBar";
 
 export {
   Login,
@@ -27,5 +28,6 @@ export {
   TagCard,
   AuthorCard,
   SearchBox,
-  SortBar
+  SortBar,
+  FilterBar
 };

@@ -3,7 +3,7 @@ import appwriteService from "../appwrite/config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faHeart } from "@fortawesome/free-solid-svg-icons";
 
-function PostCard({ $id, title, featuredImage, content }) {
+function PostCard({ $id, title, featuredImage, content, isViewingOwnPosts }) {
   const navigate = useNavigate();
 
   return (
@@ -37,16 +37,29 @@ function PostCard({ $id, title, featuredImage, content }) {
         accusamus, ea delectus nesciunt labore perspiciatis voluptas, ratione
         nisi, quas magni!
       </div>
-      <button
-        onClick={() => navigate(`/post/${$id}`)}
-        className="bg-yellow-400 hover:bg-yellow-500 w-full py-1 mt-2.5 font-semibold transition-colors duration-200 group"
-      >
-        Read detail{" "}
-        <FontAwesomeIcon
-          icon={faAngleRight}
-          className="text-xs align-baseline group-hover:ml-1"
-        />
-      </button>
+
+      {isViewingOwnPosts ? (
+        (
+          <>
+            <button className="text-xs p-0.5 px-2 underline rounded-full border tracking-wider hover:text-blue-600">Detail</button>
+            <div className="flex justify-between mt-2">
+              <button className="bg-yellow-400 font-semibold py-1 px-2 text-black hover:shadow-lg">Update</button>
+              <button className="bg-red-500 font-semibold py-1 px-2 text-white hover:shadow-lg">Delete</button>
+            </div>
+          </>
+        )
+      ) : (
+        <button
+          onClick={() => navigate(`/post/${$id}`)}
+          className="bg-yellow-400 hover:bg-yellow-500 w-full py-1 mt-2.5 font-semibold transition-colors duration-200 group"
+        >
+          Read detail{" "}
+          <FontAwesomeIcon
+            icon={faAngleRight}
+            className="text-xs align-baseline group-hover:ml-1"
+          />
+        </button>
+      )}
     </div>
   );
 }
