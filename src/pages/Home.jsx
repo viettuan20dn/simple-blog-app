@@ -85,6 +85,7 @@ function Home() {
         setPosts(posts.documents);
       }
     });
+    
   }, []);
 
   if (posts.length === 0) {
@@ -141,8 +142,8 @@ function Home() {
         <div className="text-center my-10">
           <h1 className="">Choose A Catagory</h1>
           <div className="flex flex-wrap justify-between pt-2">
-            {tags.map((tag) => (
-              <TagCard {...tag} />
+            {tags.map((tag,idx) => (
+              <TagCard {...tag} key={idx} />
             ))}
           </div>
         </div>
@@ -150,8 +151,8 @@ function Home() {
         <div className="text-center my-10">
           <h1 className="">List of favourite Authors</h1>
           <div className="sm:grid sm:grid-cols-2 md:grid-cols-5 gap-5 pt-2">
-            {topUsers.map((user) => (
-              <AuthorCard {...user} />
+            {topUsers.map((user,idx) => (
+              <AuthorCard {...user} key={idx} />
             ))}
           </div>
         </div>

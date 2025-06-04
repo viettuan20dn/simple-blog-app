@@ -1,11 +1,11 @@
 // Start with appwrite auth service
 import conf from "../conf/conf";
-import { Client, Account, ID } from "appwrite";
+import { Client, Account, ID, Databases } from "appwrite";
 
 export class AuthService {
   client = new Client();
   account;
-  constructor() {    
+  constructor() {
     this.client
       .setEndpoint(conf.appwriteUrl) // Your API Endpoint
       .setProject(conf.appwriteProjectId);
@@ -14,14 +14,24 @@ export class AuthService {
   }
   async createAccount({ email, password, name }) {
     try {
+      const accountId = ID.unique();
       const userAccount = await this.account.create(
-        ID.unique(),
+        accountId,
         email,
         password,
         name
       );
 
       if (userAccount) {
+        const databases = new Databases(this.client);
+        await databases.createDocument(
+          conf.appwriteDatabaseId,
+          conf.appwriteUsersCollectionId,
+          accountId,{
+            avatarId: null,
+            bio: "no bios"
+          }
+        );
         return this.login({ email, password });
       } else {
         return userAccount;

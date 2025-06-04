@@ -2,9 +2,37 @@ import { useNavigate } from "react-router-dom";
 import appwriteService from "../appwrite/config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faHeart } from "@fortawesome/free-solid-svg-icons";
+import parse from "html-react-parser";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 
-function PostCard({ $id, title, featuredImage, content, isViewingOwnPosts }) {
+function PostCard({
+  $id,
+  title,
+  featuredImage,
+  content,
+  isViewingOwnPosts,
+  likeCount = 0,
+  isInitiallyLiked = false,
+}) {
+  const [isLiked, setIsLiked] = useState(isInitiallyLiked);
+  const [likes, setLikes] = useState(likeCount);
+
+  const userData = useSelector((state) => state.auth.userData);
   const navigate = useNavigate();
+  const handleLikePost = () => {
+    setIsLiked((i) => !i);
+    setLikes((l) => {
+      return isLiked ? l - 1 : l + 1;
+    });
+    if (isLiked) {
+      appwriteService.likePost($id, userData.$id);
+      appwriteService.toggleLikePost($id, likeCount, false);
+    } else {
+      appwriteService.likePost($id, userData.$id);
+      appwriteService.toggleLikePost($id, likeCount, true);
+    }
+  };
 
   return (
     <div className="w-full border rounded-md p-2">
@@ -14,10 +42,16 @@ function PostCard({ $id, title, featuredImage, content, isViewingOwnPosts }) {
           alt={title}
           className="w-full rounded-md object-cover object-center h-40 sm:h-44 md:h-48"
         />
-        <div className="absolute top-1 right-2 text-gray-400 text-3xl cursor-pointer">
-          <FontAwesomeIcon icon={faHeart} />
+        <div
+          className="absolute top-1 right-2 text-gray-400 text-3xl cursor-pointer"
+          onClick={handleLikePost}
+        >
+          <FontAwesomeIcon
+            icon={faHeart}
+            className={`${isLiked ? "text-red-600" : null}`}
+          />
           <div className="absolute text-white text-[0.5rem] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-            10
+            {likes}
           </div>
         </div>
       </div>
@@ -31,23 +65,22 @@ function PostCard({ $id, title, featuredImage, content, isViewingOwnPosts }) {
         </div>
       </div>
       <h2 className="text-base font-bold">{title}</h2>
-      <div className="text-gray-500 text-sm line-clamp-2">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, eveniet
-        sequi doloribus repudiandae animi vitae? Sequi dolore similique tenetur
-        accusamus, ea delectus nesciunt labore perspiciatis voluptas, ratione
-        nisi, quas magni!
-      </div>
+      <div className="text-gray-500 text-sm line-clamp-2">{parse(content)}</div>
 
       {isViewingOwnPosts ? (
-        (
-          <>
-            <button className="text-xs p-0.5 px-2 underline rounded-full border tracking-wider hover:text-blue-600">Detail</button>
-            <div className="flex justify-between mt-2">
-              <button className="bg-yellow-400 font-semibold py-1 px-2 text-black hover:shadow-lg">Update</button>
-              <button className="bg-red-500 font-semibold py-1 px-2 text-white hover:shadow-lg">Delete</button>
-            </div>
-          </>
-        )
+        <>
+          <button className="text-xs p-0.5 px-2 underline rounded-full border tracking-wider hover:text-blue-600">
+            Detail
+          </button>
+          <div className="flex justify-between mt-2">
+            <button className="bg-yellow-400 font-semibold py-1 px-2 text-black hover:shadow-lg">
+              Update
+            </button>
+            <button className="bg-red-500 font-semibold py-1 px-2 text-white hover:shadow-lg">
+              Delete
+            </button>
+          </div>
+        </>
       ) : (
         <button
           onClick={() => navigate(`/post/${$id}`)}

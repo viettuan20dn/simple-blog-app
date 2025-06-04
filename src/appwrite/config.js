@@ -19,7 +19,7 @@ export class Service {
     try {
       return await this.databases.getDocument(
         conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
+        conf.appwriteBlogsCollectionId,
         slug
       );
     } catch (error) {
@@ -31,7 +31,7 @@ export class Service {
     try {
       return await this.databases.listDocuments(
         conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
+        conf.appwriteBlogsCollectionId,
         queries
       );
     } catch (error) {
@@ -43,7 +43,7 @@ export class Service {
     try {
       return await this.databases.createDocument(
         conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
+        conf.appwriteBlogsCollectionId,
         slug,
         {
           title,
@@ -59,12 +59,10 @@ export class Service {
     }
   }
   async updatePost(slug, { title, content, featuredImage, status }) {
-    console.log("content",content);
-    
     try {
       return await this.databases.updateDocument(
         conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
+        conf.appwriteBlogsCollectionId,
         slug,
         { title, content, featuredImage, status }
       );
@@ -77,12 +75,59 @@ export class Service {
     try {
       await this.databases.deleteDocument(
         conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
+        conf.appwriteBlogsCollectionId,
         slug
       );
       return true;
     } catch (error) {
       console.log("Appwrite service :: deletePost() :: ", error);
+      return false;
+    }
+  }
+  async likePost(blogId, userId) {
+    try {
+      return await this.databases.createDocument(
+        conf.appwriteDatabaseId,
+        conf.appwriteLikesCollectionId,
+        ID.unique(),
+        {
+          blogId,
+          userId,
+        }
+      );
+    } catch (error) {
+      console.log("Error from likePost:: ", error);
+      return false;
+    }
+  }
+  async dislikePost(blogId, userId) {
+    const result = await this.databases.listDocuments(
+      conf.appwriteDatabaseId,
+      conf.appwriteLikesCollectionId,
+      [Query.equal("blogId", blogId), Query.equal("userId", userId)]
+    );
+    if (result.total > 0) {
+      const likeDocId = result.documents[0].$id;
+      await this.databases.deleteDocument(
+        conf.appwriteDatabaseId,
+        conf.appwriteLikesCollectionId,
+        likeDocId
+      );
+    }
+  }
+
+  async toggleLikePost({ slug, likeCount }, like = true) {
+    likeCount = likeCount + (like ? 1 : -1);
+
+    try {
+      return await this.databases.updateDocument(
+        conf.appwriteDatabaseId,
+        conf.appwriteBlogsCollectionId,
+        slug,
+        { likeCount }
+      );
+    } catch (error) {
+      console.log("Appwrite service :: toggleLikePost() :: ", error);
       return false;
     }
   }
@@ -111,10 +156,7 @@ export class Service {
     }
   }
   getFilePreview(fileId) {
-    const result = this.bucket.getFilePreview(
-      conf.appwriteBucketId,
-      fileId
-    );
+    const result = this.bucket.getFilePreview(conf.appwriteBucketId, fileId);
     return result + "&mode=admin";
   }
 }
