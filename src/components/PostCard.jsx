@@ -5,9 +5,11 @@ import { faAngleRight, faHeart } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 import { useState } from "react";
+import { formatDate } from "../utils";
 
 function PostCard({
   $id,
+  $createdAt,
   title,
   featuredImage,
   content,
@@ -24,7 +26,7 @@ function PostCard({
     setIsLiked((i) => !i);
     setLikes((l) => {
       return isLiked ? l - 1 : l + 1;
-    });
+    });    
     if (isLiked) {
       appwriteService.likePost($id, userData.$id);
       appwriteService.toggleLikePost($id, likeCount, false);
@@ -58,7 +60,7 @@ function PostCard({
       <div className="flex flex-wrap text-[0.6rem] justify-between">
         <div className="text-gray-500">
           By <span className="text-purple-600 cursor-pointer">John Doe</span> |{" "}
-          {"May 23, 2020"}
+          {formatDate($createdAt)}
         </div>
         <div className="rounded-lg bg-blue-200 px-2 py-0.5 font-semibold text-blue-600">
           Technology

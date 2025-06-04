@@ -7,6 +7,9 @@ const likedPostIdsSlice = createSlice({
   name: "likedPostIds",
   initialState,
   reducers: {
+    set: (state, action) => {
+      state.favPostIds = action.payload;
+    },
     add: (state, action) => {
       state.favPostIds.push(action.payload);
     },
@@ -18,4 +21,4 @@ const likedPostIdsSlice = createSlice({
 
 export default likedPostIdsSlice.reducer;
 
-export const { add, subtract } = likedPostIdsSlice.actions;
+export const { add, subtract, set } = likedPostIdsSlice.actions;

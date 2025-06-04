@@ -1,5 +1,6 @@
 import { use, useEffect, useState } from "react";
 import appwriteService from "../appwrite/config";
+import { useSelector } from "react-redux";
 
 import {
   PostCard,
@@ -11,6 +12,8 @@ import {
 
 function Home() {
   const [posts, setPosts] = useState([]);
+  const likedPostList = useSelector((state) => state.likedPostIds.favPostIds);
+
   const tags = [
     {
       tagName: "Business",
@@ -82,10 +85,13 @@ function Home() {
   useEffect(() => {
     appwriteService.getPosts([]).then((posts) => {
       if (posts) {
+        posts.documents.forEach((post) => {
+          post.isInitiallyLiked = post && likedPostList.includes(post.$id);
+        });
+
         setPosts(posts.documents);
       }
     });
-    
   }, []);
 
   if (posts.length === 0) {
@@ -142,7 +148,7 @@ function Home() {
         <div className="text-center my-10">
           <h1 className="">Choose A Catagory</h1>
           <div className="flex flex-wrap justify-between pt-2">
-            {tags.map((tag,idx) => (
+            {tags.map((tag, idx) => (
               <TagCard {...tag} key={idx} />
             ))}
           </div>
@@ -151,7 +157,7 @@ function Home() {
         <div className="text-center my-10">
           <h1 className="">List of favourite Authors</h1>
           <div className="sm:grid sm:grid-cols-2 md:grid-cols-5 gap-5 pt-2">
-            {topUsers.map((user,idx) => (
+            {topUsers.map((user, idx) => (
               <AuthorCard {...user} key={idx} />
             ))}
           </div>

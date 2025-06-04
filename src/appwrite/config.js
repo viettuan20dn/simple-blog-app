@@ -39,6 +39,16 @@ export class Service {
       return false;
     }
   }
+  async getLikedPosts(userId) {
+    const queries = [Query.equal("userId", userId)];
+    const likesDocument = await this.databases.listDocuments(
+      conf.appwriteDatabaseId,
+      conf.appwriteLikesCollectionId,
+      queries
+    );
+    const likedPostIds = likesDocument.documents.map((doc) => doc.blogId);
+    return likedPostIds;
+  }
   async createPost({ title, slug, content, featuredImage, status, userId }) {
     try {
       return await this.databases.createDocument(
@@ -95,6 +105,7 @@ export class Service {
           userId,
         }
       );
+      
     } catch (error) {
       console.log("Error from likePost:: ", error);
       return false;
@@ -116,7 +127,7 @@ export class Service {
     }
   }
 
-  async toggleLikePost({ slug, likeCount }, like = true) {
+  async toggleLikePost(slug, likeCount, like = true) {
     likeCount = likeCount + (like ? 1 : -1);
 
     try {

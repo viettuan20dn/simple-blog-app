@@ -24,14 +24,20 @@ export class AuthService {
 
       if (userAccount) {
         const databases = new Databases(this.client);
-        await databases.createDocument(
-          conf.appwriteDatabaseId,
-          conf.appwriteUsersCollectionId,
-          accountId,{
-            avatarId: null,
-            bio: "no bios"
-          }
-        );
+        try {
+          await databases.createDocument(
+            conf.appwriteDatabaseId,
+            conf.appwriteUsersCollectionId,
+            ID.unique(),
+            {
+              userId: accountId,
+              avatarId: null,
+              bio: "no bios",
+            }
+          );
+        } catch (error) {
+          console.log("Error from createDocumentAtUsers: ", error);
+        }
         return this.login({ email, password });
       } else {
         return userAccount;
