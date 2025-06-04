@@ -66,8 +66,8 @@ function PostCard({
           Technology
         </div>
       </div>
-      <h2 className="text-base font-bold">{title}</h2>
-      <div className="text-gray-500 text-sm line-clamp-2">{parse(content)}</div>
+      <h2 className="text-base font-bold h-12 line-clamp-2">{title}</h2>
+      <div className="text-gray-500 text-sm h-10 line-clamp-2 overflow-hidden">{parse(content)}</div>
 
       {isViewingOwnPosts ? (
         <>

@@ -50,6 +50,7 @@ export class Service {
     return likedPostIds;
   }
   async createPost({ title, slug, content, featuredImage, status, userId }) {
+    if (slug.length > 36) slug = slug.slice(0,36);
     try {
       return await this.databases.createDocument(
         conf.appwriteDatabaseId,
@@ -105,7 +106,6 @@ export class Service {
           userId,
         }
       );
-      
     } catch (error) {
       console.log("Error from likePost:: ", error);
       return false;
@@ -129,7 +129,7 @@ export class Service {
 
   async toggleLikePost(slug, likeCount, like = true) {
     likeCount = likeCount + (like ? 1 : -1);
-
+    
     try {
       return await this.databases.updateDocument(
         conf.appwriteDatabaseId,
