@@ -16,6 +16,7 @@ function PostCard({
   isViewingOwnPosts,
   likeCount = 0,
   isInitiallyLiked = false,
+  name="Unknown"
 }) {
   const [isLiked, setIsLiked] = useState(isInitiallyLiked);
   const [likes, setLikes] = useState(likeCount);
@@ -27,6 +28,7 @@ function PostCard({
     setLikes((l) => {
       return isLiked ? l - 1 : l + 1;
     });    
+    
     if (isLiked) {
       appwriteService.likePost($id, userData.$id);
       appwriteService.toggleLikePost($id, likeCount, false);
@@ -59,7 +61,7 @@ function PostCard({
       </div>
       <div className="flex flex-wrap text-[0.6rem] justify-between">
         <div className="text-gray-500">
-          By <span className="text-purple-600 cursor-pointer">John Doe</span> |{" "}
+          By <span className="text-purple-600 cursor-pointer">{name}</span> |{" "}
           {formatDate($createdAt)}
         </div>
         <div className="rounded-lg bg-blue-200 px-2 py-0.5 font-semibold text-blue-600">

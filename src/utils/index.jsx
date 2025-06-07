@@ -1,4 +1,6 @@
 function formatDate(isoString) {
+  console.log(isoString);
+  
   const date = new Date(isoString);
   // Format: "Month Day, Year"
   const formatted = date.toLocaleDateString("en-US", {
@@ -9,4 +11,9 @@ function formatDate(isoString) {
   return formatted;
 }
 
-export { formatDate };
+function isArrayIncluded(array1, array2) {
+  return array1.every(item => array2.includes(item));
+}
+
+
+export { formatDate, isArrayIncluded };

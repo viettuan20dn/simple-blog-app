@@ -9,9 +9,11 @@ import {
   TagCard,
   AuthorCard,
 } from "../components";
+import { Query } from "appwrite";
 
 function Home() {
-  const [posts, setPosts] = useState([]);
+  const [recentPosts, setRecentPosts] = useState([]);
+  const [favPosts, setFavPosts] = useState([]);
   const likedPostList = useSelector((state) => state.likedPostIds.favPostIds);
 
   const tags = [
@@ -83,18 +85,32 @@ function Home() {
   ];
 
   useEffect(() => {
-    appwriteService.getPosts([]).then((posts) => {
-      if (posts) {
-        posts.documents.forEach((post) => {
-          post.isInitiallyLiked = post && likedPostList.includes(post.$id);
-        });
+    appwriteService
+      .getPosts([Query.orderDesc("$createdAt"), Query.limit(4)])
+      .then((posts) => {
+        if (posts) {
+          posts.documents.forEach((post) => {
+            post.isInitiallyLiked = post && likedPostList.includes(post.$id);
+          });
 
-        setPosts(posts.documents);
-      }
-    });
+          setRecentPosts(posts.documents);
+        }
+      });
+
+    appwriteService
+      .getPosts([Query.orderDesc("likeCount"), Query.limit(4)])
+      .then((posts) => {
+        if (posts) {
+          posts.documents.forEach((post) => {
+            post.isInitiallyLiked = post && likedPostList.includes(post.$id);
+          });
+
+          setFavPosts(posts.documents);
+        }
+      });
   }, []);
 
-  if (posts.length === 0) {
+  if (recentPosts.length === 0) {
     return (
       <div className="w-full py-8">
         <Container>
@@ -114,7 +130,7 @@ function Home() {
         </h2>
         <div className="w-full">
           <div className="flex flex-wrap py-2">
-            {posts.map((post) => (
+            {recentPosts.map((post) => (
               <div className="p-2 w-1/4" key={post.$id}>
                 <PostCard {...post} />
               </div>
@@ -132,7 +148,7 @@ function Home() {
         </h2>
         <div className="w-full">
           <div className="flex flex-wrap py-2">
-            {posts.map((post) => (
+            {favPosts.map((post) => (
               <div className="p-2 w-1/4" key={post.$id}>
                 <PostCard {...post} />
               </div>

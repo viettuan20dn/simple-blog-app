@@ -1,7 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSort } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSort,
+  faSortUp,
+  faSortDown,
+} from "@fortawesome/free-solid-svg-icons";
+import { ASC, DESC, NO_SORT } from "../utils/consts";
 
-function SortBar() {
+function SortBar({ sortModes, onSort }) {
   return (
     <div className="flex flex-wrap items-center gap-3">
       <div className="flex relative [clip-path:polygon(0_0,calc(100%-12px)_0,100%_50%,calc(100%-12px)_100%,0_100%)]">
@@ -16,10 +21,22 @@ function SortBar() {
         transition-all duration-200 ease-in-out
         border rounded-full border-black
         hover:shadow-md hover:shadow-gray-400
+        ${!!sortModes.likes && "bg-blue-500 text-white border-none"}
       `}
+        onClick={() => {
+          onSort("likes");
+        }}
       >
         Likes
-        <FontAwesomeIcon icon={faSort} className="ml-1 w-3 h-3" />
+        {sortModes.likes == NO_SORT && (
+          <FontAwesomeIcon icon={faSort} className="ml-1 w-3 h-3" />
+        )}
+        {sortModes.likes == DESC && (
+          <FontAwesomeIcon icon={faSortDown} className="ml-1 w-3 h-3" />
+        )}
+        {sortModes.likes == ASC && (
+          <FontAwesomeIcon icon={faSortUp} className="ml-1 w-3 h-3" />
+        )}
       </button>
 
       <button
@@ -28,10 +45,23 @@ function SortBar() {
         transition-all duration-200 ease-in-out
         border rounded-full border-black
         hover:shadow-md hover:shadow-gray-400
+        ${!!sortModes.postedTime && "bg-blue-500 text-white border-none"}
+
       `}
+        onClick={() => {
+          onSort("postedTime");
+        }}
       >
         Posted time
-        <FontAwesomeIcon icon={faSort} className="ml-1 w-3 h-3" />
+        {sortModes.postedTime == NO_SORT && (
+          <FontAwesomeIcon icon={faSort} className="ml-1 w-3 h-3" />
+        )}
+        {sortModes.postedTime == DESC && (
+          <FontAwesomeIcon icon={faSortDown} className="ml-1 w-3 h-3" />
+        )}
+        {sortModes.postedTime == ASC && (
+          <FontAwesomeIcon icon={faSortUp} className="ml-1 w-3 h-3" />
+        )}
       </button>
     </div>
   );

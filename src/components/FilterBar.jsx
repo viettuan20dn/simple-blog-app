@@ -1,12 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
 
-function FilterBar() {
+function FilterBar({onChangeTagModes}) {
   const options = [
     { value: "chocolate", label: "Chocolate" },
     { value: "strawberry", label: "Strawberry" },
     { value: "vanilla", label: "Vanilla" },
   ];
+
+  function handleChangeSelect(e){
+    const modes = e.map(item=>item.value);
+    onChangeTagModes(modes);
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-3">
       <div className="flex relative [clip-path:polygon(0_0,calc(100%-12px)_0,100%_50%,calc(100%-12px)_100%,0_100%)]">
@@ -22,6 +28,7 @@ function FilterBar() {
         classNamePrefix="select"
         placeholder="Select tags..."
         options={options}
+        onChange={handleChangeSelect}
       />
     </div>
   );

@@ -24,11 +24,11 @@ function Signup() {
   const createUser = async (data) => {
     setError("");
     setLoading(true);
-    try {
+    try { 
       const userData = await authService.createAccount(data);
       if (userData) {
-        const userData = await authService.getCurrentUser();
-        if (userData) dispatch(login(userData));
+        const userData = await authService.getCurrentUser();        
+        if (userData) dispatch(login({userData}));
         navigate("/");
       }
     } catch (error) {
